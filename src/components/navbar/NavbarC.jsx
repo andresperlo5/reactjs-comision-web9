@@ -20,8 +20,8 @@ const NavbarC = () => {
               <NavLink className={'nav-link'} to="/contact">Contacto</NavLink>
             </Nav>
             <Nav className="ms-auto">
-              <NavLink className={'nav-link'} to="#home">Iniciar Sesion</NavLink>
-              <NavLink className={'nav-link'} to="#link">Registrarse</NavLink>
+              <NavLink className={'nav-link'} to="/login">Iniciar Sesion</NavLink>
+              <NavLink className={'nav-link'} to="/register">Registrarse</NavLink>
             </Nav>
           </Navbar.Collapse>
         </Container>
