@@ -17,6 +17,7 @@ const HomePage = () => {
       const productos = await fetch('https://fakestoreapi.com/products')
       const data = await productos.json()
       setProductos(data)
+      localStorage.setItem("productos", JSON.stringify(data))
     } catch (error) {
       console.log(error)
     }

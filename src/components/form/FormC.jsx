@@ -105,6 +105,7 @@ const FormC = ({ idPage }) => {
     if (usuarioExiste.contrasenia === formulario.contrasenia) {
       usuarioExiste.login = true
       localStorage.setItem('usuarios', JSON.stringify(usuarioLs))
+      sessionStorage.setItem('usuarioLogueado', JSON.stringify(usuarioExiste))
       if (usuarioExiste.rol === 'usuario') {
         setTimeout(() => {
           navigate('/user')

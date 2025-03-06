@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
 import { Button, Col, Container, Row } from "react-bootstrap"
-import { useParams } from "react-router"
-
+import { useNavigate, useParams } from "react-router"
+import Swal from 'sweetalert2'
 
 const DetalleProducto = () => {
+  const navigate = useNavigate()
   const { id } = useParams()
   const [producto, setProducto] = useState([])
 
@@ -15,6 +16,61 @@ const DetalleProducto = () => {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const agregarProductoCarrito = () => {
+    const usuarioLogueado = JSON.parse(sessionStorage.getItem('usuarioLogueado'))
+    const carritoLs = JSON.parse(localStorage.getItem('carrito')) || []
+    const productoExiste = carritoLs.find((prod) => prod.id === producto.id)
+
+    if (!usuarioLogueado) {
+      Swal.fire({
+        icon: "info",
+        title: "Debes iniciar sesion para poder comprar",
+      });
+
+      navigate('/login')
+
+      return
+    }
+
+    if (productoExiste) {
+      Swal.fire({
+        icon: "error",
+        title: "Este producto ya esta cargado en el carrito!",
+        text: "Puedes modificar la cantidad dentro del menu del carrito"
+      });
+      return
+    }
+
+
+    carritoLs.push(producto)
+    Swal.fire({
+      title: "Producto cargado con exito en el carrito!",
+      icon: "success"
+    });
+    localStorage.setItem('carrito', JSON.stringify(carritoLs))
+
+
+  }
+
+  const handleClickPay = () => {
+    const usuarioLogueado = JSON.parse(sessionStorage.getItem('usuarioLogueado'))
+
+    if (!usuarioLogueado) {
+      Swal.fire({
+        icon: "info",
+        title: "Debes iniciar sesion para poder comprar",
+      });
+
+      navigate('/login')
+
+      return
+    }
+    Swal.fire({
+      title: "Gracias por tu compra!",
+      icon: "success"
+    });
   }
 
   useEffect(() => {
@@ -34,8 +90,8 @@ const DetalleProducto = () => {
             <h3>{producto.title}</h3>
             <p>${producto.price}</p>
             <p>{producto.description}</p>
-            <Button className="mx-3" variant="success">Agregar Carrito</Button>
-            <Button>Comprar</Button>
+            <Button className="mx-3" variant="success" onClick={agregarProductoCarrito}>Agregar Carrito</Button>
+            <Button onClick={handleClickPay}>Comprar</Button>
           </Col>
         </Row>
       </Container>
