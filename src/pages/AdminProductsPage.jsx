@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import TableC from "../components/table/TableC"
+import { TableCProductsAdmin } from "../components/table/TableCProductsAdmin"
 
 
 const AdminProductsPage = () => {
@@ -15,9 +16,10 @@ const AdminProductsPage = () => {
   }, [])
 
   return (
-    <>
-      <TableC idPage='adminProducts' array={products} />
-    </>
+    <section>
+      {/* <TableC idPage='adminProducts' array={products} /> */}
+      <TableCProductsAdmin/>
+    </section>
   )
 }
 
