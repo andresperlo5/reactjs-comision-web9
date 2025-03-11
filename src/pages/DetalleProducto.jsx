@@ -9,10 +9,20 @@ const DetalleProducto = () => {
   const [producto, setProducto] = useState([])
 
   const obtenerProducto = async () => {
+    const productosLs = JSON.parse(localStorage.getItem('productos')) || []
+
     try {
-      const producto = await fetch(`https://fakestoreapi.com/products/${id}`)
-      const data = await producto.json()
-      setProducto(data)
+
+      if (!productosLs.length) {
+        const producto = await fetch(`https://fakestoreapi.com/products/${id}`)
+        const data = await producto.json()
+        setProducto(data)
+      } else {
+        const productoFiltrado = productosLs.find((prod) => prod.id === Number(id))
+        setProducto(productoFiltrado)
+      }
+
+
     } catch (error) {
       console.log(error)
     }

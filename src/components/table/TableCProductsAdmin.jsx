@@ -75,7 +75,8 @@ export const TableCProductsAdmin = () => {
                   >
                     Eliminar
                   </Button>
-                  <Button className="btn btn-warning ms-3">Editar</Button>
+                  {/*             <Button className="btn btn-warning ms-3" >Editar</Button> */}
+                  <Link to={`/admin/crearProducto?id=${producto.id}`} className="btn btn-warning ms-3">Editar</Link>
                 </td>
               </tr>
             ))}

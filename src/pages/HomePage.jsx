@@ -14,10 +14,21 @@ const HomePage = () => {
 
   const obtenerProductos = async () => {
     try {
-      const productos = await fetch('https://fakestoreapi.com/products')
-      const data = await productos.json()
-      setProductos(data)
-      localStorage.setItem("productos", JSON.stringify(data))
+      const productosLs = JSON.parse(localStorage.getItem('productos')) || []
+
+
+      if (!productosLs.length) {
+        console.log('1')
+        const productos = await fetch('https://fakestoreapi.com/products')
+        const data = await productos.json()
+        setProductos(data)
+        localStorage.setItem("productos", JSON.stringify(data))
+      } else {
+        console.log('2')
+        setProductos(productosLs)
+      }
+
+
     } catch (error) {
       console.log(error)
     }
