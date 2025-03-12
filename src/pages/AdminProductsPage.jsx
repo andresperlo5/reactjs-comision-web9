@@ -5,6 +5,7 @@ import { TableCProductsAdmin } from "../components/table/TableCProductsAdmin"
 
 const AdminProductsPage = () => {
   const [products, setProducts] = useState([])
+  const usuarioLogeado = JSON.parse(sessionStorage.getItem('usuarioLogueado')) || null
 
   const getProducts = () => {
     const productosLs = JSON.parse(localStorage.getItem('productos')) || []
@@ -16,10 +17,15 @@ const AdminProductsPage = () => {
   }, [])
 
   return (
-    <section>
-      {/* <TableC idPage='adminProducts' array={products} /> */}
-      <TableCProductsAdmin/>
-    </section>
+    <>
+      {
+        usuarioLogeado &&
+        <section>
+          {/* <TableC idPage='adminProducts' array={products} /> */}
+          <TableCProductsAdmin />
+        </section>
+      }
+    </>
   )
 }
 

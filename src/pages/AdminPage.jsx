@@ -1,7 +1,13 @@
 
 const AdminPage = () => {
+  const usuarioLogeado = JSON.parse(sessionStorage.getItem('usuarioLogueado')) || null
   return (
-    <div>AdminPage</div>
+    <>
+      {
+        usuarioLogeado &&
+        <div>AdminPage</div>
+      }
+    </>
   )
 }
 

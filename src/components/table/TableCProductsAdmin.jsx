@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
 export const TableCProductsAdmin = () => {
+  const navigate = useNavigate()
   const [productos, setProductos] = useState([]);
+  const usuarioLogeado = JSON.parse(sessionStorage.getItem('usuarioLogueado')) || null
 
   const productoLs = () => {
     setProductos(JSON.parse(localStorage.getItem("productos")) || []);
@@ -15,6 +17,26 @@ export const TableCProductsAdmin = () => {
   }, []);
 
   const eliminarProducto = (id) => {
+    if (!usuarioLogeado) {
+      Swal.fire({
+        icon: "error",
+        title: "Debes iniciar sesion para continuar!",
+        text: "En breve seras redirigido al inicio de sesion"
+      });
+
+      setTimeout(() => {
+        navigate('/login')
+      }, 1500);
+      return
+    }
+
+    if (usuarioLogeado && usuarioLogeado.rol === 'usuario') {
+      setTimeout(() => {
+        navigate('/user')
+      }, 100);
+      return
+    }
+
     Swal.fire({
       title: "Estas Seguro que quieres borrar este Producto?",
       text: "Este cambio es irreversible!!!",
@@ -42,46 +64,73 @@ export const TableCProductsAdmin = () => {
     });
   };
 
+
+  const validarUsuario = () => {
+    if (!usuarioLogeado) {
+      Swal.fire({
+        icon: "error",
+        title: "Debes iniciar sesion para continuar!",
+        text: "En breve seras redirigido al inicio de sesion"
+      });
+
+      setTimeout(() => {
+        navigate('/login')
+      }, 1500);
+      return
+    } else if (usuarioLogeado && usuarioLogeado.rol === 'usuario') {
+      setTimeout(() => {
+        navigate('/user')
+      }, 100);
+    }
+  }
+
+
+
   return (
-    <Container>
-      <h1>Tabla Productos</h1>
-      <div className="d-flex justify-content-end">
-        <Link to="/admin/crearProducto" className="btn btn-primary">
-          Añadir Producto
-        </Link>
-      </div>
-      <table className="table mt-5">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Nombre del Producto</th>
-            <th scope="col">Descripcion</th>
-            <th scope="col">Precio</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productos &&
-            productos.map((producto) => (
-              <tr key={producto.id}>
-                <td>{producto.id}</td>
-                <td>{producto.title}</td>
-                <td>{producto.description}</td>
-                <td>{producto.price}</td>
-                <td className="d-flex">
-                  <Button
-                    onClick={() => eliminarProducto(producto.id)}
-                    className="btn btn-danger"
-                  >
-                    Eliminar
-                  </Button>
-                  {/*             <Button className="btn btn-warning ms-3" >Editar</Button> */}
-                  <Link to={`/admin/crearProducto?id=${producto.id}`} className="btn btn-warning ms-3">Editar</Link>
-                </td>
+    <>
+      {
+        usuarioLogeado && usuarioLogeado.rol === 'admin' &&
+        <Container>
+          <h1>Tabla Productos</h1>
+          <div className="d-flex justify-content-end">
+            <Link to={usuarioLogeado ? "/admin/crearProducto" : '#'} className="btn btn-primary" onClick={validarUsuario}>
+              Añadir Producto
+            </Link>
+          </div>
+          <table className="table mt-5">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre del Producto</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Precio</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-        </tbody>
-      </table>
-    </Container>
+            </thead>
+            <tbody>
+              {productos &&
+                productos.map((producto) => (
+                  <tr key={producto.id}>
+                    <td>{producto.id}</td>
+                    <td>{producto.title}</td>
+                    <td>{producto.description}</td>
+                    <td>{producto.price}</td>
+                    <td className="d-flex">
+                      <Button
+                        onClick={() => eliminarProducto(producto.id)}
+                        className="btn btn-danger"
+                      >
+                        Eliminar
+                      </Button>
+                      {/*             <Button className="btn btn-warning ms-3" >Editar</Button> */}
+                      <Link to={usuarioLogeado ? `/admin/crearProducto?id=${producto.id}` : "#"} className="btn btn-warning ms-3" onClick={validarUsuario}>Editar</Link>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </Container>
+      }
+    </>
   );
 };

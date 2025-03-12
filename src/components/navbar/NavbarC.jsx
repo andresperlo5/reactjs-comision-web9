@@ -34,7 +34,7 @@ const NavbarC = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             {
-              usuarioLogueado && usuarioLogueado.rol === 'user' ?
+              usuarioLogueado && usuarioLogueado.rol === 'usuario' ?
                 <Nav className="ms-auto">
                   <NavLink className={'nav-link'} to="/user">Inicio</NavLink>
                   <NavLink className={'nav-link'} to="/user/galery">Galeria</NavLink>

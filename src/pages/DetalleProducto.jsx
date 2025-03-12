@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Button, Col, Container, Row } from "react-bootstrap"
 import { useNavigate, useParams } from "react-router"
 import Swal from 'sweetalert2'
+import { useApiFakeStore } from "../helpers/useApi"
 
 const DetalleProducto = () => {
   const navigate = useNavigate()
@@ -14,9 +15,11 @@ const DetalleProducto = () => {
     try {
 
       if (!productosLs.length) {
-        const producto = await fetch(`https://fakestoreapi.com/products/${id}`)
-        const data = await producto.json()
-        setProducto(data)
+        const res = await useApiFakeStore(id)
+        setProducto(res)
+        /*  const producto = await fetch(`https://fakestoreapi.com/products/${id}`)
+         const data = await producto.json()
+         setProducto(data) */
       } else {
         const productoFiltrado = productosLs.find((prod) => prod.id === Number(id))
         setProducto(productoFiltrado)
