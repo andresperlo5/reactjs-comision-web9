@@ -2,7 +2,7 @@ import Card from 'react-bootstrap/Card';
 import './CardC.css'
 import { Link } from 'react-router';
 
-const CardC = ({ idProd, urlImagen, titulo, descripcion }) => {
+const CardC = ({ idProd, urlImagen, titulo, descripcion, precio }) => {
   //const { urlImagen, titulo, descripcion } = props
   return (
     <>
@@ -10,6 +10,7 @@ const CardC = ({ idProd, urlImagen, titulo, descripcion }) => {
         <Card.Img variant="top" src={urlImagen} />
         <Card.Body>
           <Card.Title className='text-truncate'>{titulo}</Card.Title>
+          <Card.Title className='text-truncate'>${precio}</Card.Title>
           <Card.Text className='text-truncate'>
             {descripcion}
           </Card.Text>

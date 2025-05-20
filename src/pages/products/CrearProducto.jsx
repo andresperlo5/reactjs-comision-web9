@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
+import clientAxios, { configHeaders } from "../../helpers/axios.helpers";
 
 export const CrearProducto = () => {
   const [nombre, setNombre] = useState("");
@@ -16,9 +17,37 @@ export const CrearProducto = () => {
   const navigate = useNavigate();
   const idParams = new URLSearchParams(location.search).get('id')
 
-  const crearProducto = (e) => {
+  const crearProducto = async (e) => {
     e.preventDefault();
 
+    console.log(productoEditar)
+
+    const res = await clientAxios.post("/productos", {
+
+      nombre,
+      descripcion,
+      precio,
+      imagen: "url"
+    }, configHeaders)
+
+    if (res.status === 201) {
+      setNombre("");
+      setDescripcion("");
+      setPrecio("");
+
+      Swal.fire({
+        title: "Producto creado correctamente!",
+        icon: "success",
+      });
+
+      navigate("/admin/products");
+    }
+
+
+
+
+
+/* 
     const productosLS = JSON.parse(localStorage.getItem("productos"));
 
     console.log(productosLS);
@@ -44,7 +73,7 @@ export const CrearProducto = () => {
     });
 
     navigate("/admin/products");
-  };
+ */  };
 
 
   const obtenerProductoEditar = () => {

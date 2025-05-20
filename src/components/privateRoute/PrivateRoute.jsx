@@ -3,17 +3,18 @@ import { useNavigate } from "react-router"
 
 const PrivateRoute = ({ children, rol }) => {
   const navigate = useNavigate()
-  const usuarioLogeado = JSON.parse(sessionStorage.getItem('usuarioLogueado')) || null
+  const token = JSON.parse(sessionStorage.getItem('token')) || null
+  const rolUsuario = JSON.parse(sessionStorage.getItem('rol')) || null
 
-  if (!usuarioLogeado) {
+  if (!token) {
     setTimeout(() => {
       navigate('/')
     }, 100);
   } else {
-    if (rol === usuarioLogeado.rol) {
+    if (rol === rolUsuario) {
       return children
     } else {
-      if (usuarioLogeado.rol === 'usuario') {
+      if (rolUsuario === 'usuario') {
         setTimeout(() => {
           navigate('/user')
         }, 100)

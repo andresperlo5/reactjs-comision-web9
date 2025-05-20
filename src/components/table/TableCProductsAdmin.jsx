@@ -1,20 +1,24 @@
 import { useEffect, useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, Tab } from "react-bootstrap";
 import { Link, useNavigate } from "react-router";
 import Swal from "sweetalert2";
+import clientAxios from "../../helpers/axios.helpers";
 
 export const TableCProductsAdmin = () => {
   const navigate = useNavigate()
   const [productos, setProductos] = useState([]);
-  const usuarioLogeado = JSON.parse(sessionStorage.getItem('usuarioLogueado')) || null
+  const usuarioLogeado = JSON.parse(sessionStorage.getItem('token')) || null
+  const rol = JSON.parse(sessionStorage.getItem('rol')) || null
 
-  const productoLs = () => {
-    setProductos(JSON.parse(localStorage.getItem("productos")) || []);
+  const productoLs = async () => {
+    console.log("1")
+    const res = await clientAxios.get("/productos")
+    console.log(res)
+    setProductos(res.data.productos)
+    //setProductos(JSON.parse(localStorage.getItem("productos")) || []);
   };
 
-  useEffect(() => {
-    productoLs();
-  }, []);
+
 
   const eliminarProducto = (id) => {
     if (!usuarioLogeado) {
@@ -30,7 +34,7 @@ export const TableCProductsAdmin = () => {
       return
     }
 
-    if (usuarioLogeado && usuarioLogeado.rol === 'usuario') {
+    if (usuarioLogeado && rol === 'usuario') {
       setTimeout(() => {
         navigate('/user')
       }, 100);
@@ -77,7 +81,7 @@ export const TableCProductsAdmin = () => {
         navigate('/login')
       }, 1500);
       return
-    } else if (usuarioLogeado && usuarioLogeado.rol === 'usuario') {
+    } else if (usuarioLogeado && rol === 'usuario') {
       setTimeout(() => {
         navigate('/user')
       }, 100);
@@ -85,11 +89,13 @@ export const TableCProductsAdmin = () => {
   }
 
 
-
+  useEffect(() => {
+    productoLs();
+  }, []);
   return (
     <>
       {
-        usuarioLogeado && usuarioLogeado.rol === 'admin' &&
+        usuarioLogeado && rol === 'admin' &&
         <Container>
           <h1>Tabla Productos</h1>
           <div className="d-flex justify-content-end">
@@ -109,12 +115,12 @@ export const TableCProductsAdmin = () => {
             </thead>
             <tbody>
               {productos &&
-                productos.map((producto) => (
-                  <tr key={producto.id}>
-                    <td>{producto.id}</td>
-                    <td>{producto.title}</td>
-                    <td>{producto.description}</td>
-                    <td>{producto.price}</td>
+                productos.map((producto, i) => (
+                  <tr key={producto._id}>
+                    <td>{i + 1}</td>
+                    <td>{producto.nombre}</td>
+                    <td>{producto.descripcion}</td>
+                    <td>{producto.precio}</td>
                     <td className="d-flex">
                       <Button
                         onClick={() => eliminarProducto(producto.id)}

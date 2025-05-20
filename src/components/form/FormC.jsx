@@ -3,6 +3,8 @@ import { Container } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router';
+import Swal from 'sweetalert2';
+import clientAxios from '../../helpers/axios.helpers';
 
 const FormC = ({ idPage }) => {
   const navigate = useNavigate()
@@ -34,7 +36,7 @@ const FormC = ({ idPage }) => {
     setFormulario({ ...formulario, [ev.target.name]: value })
   }
 
-  const handleClickRegisterForm = (ev) => {
+  const handleClickRegisterForm = async (ev) => {
     ev.preventDefault()
     const usuarioLs = JSON.parse(localStorage.getItem('usuarios')) || []
 
@@ -51,18 +53,54 @@ const FormC = ({ idPage }) => {
 
     if (formulario.nombreUsuario && formulario.email && formulario.contrasenia && formulario.repContrasenia && formulario.checkForm) {
       if (formulario.contrasenia === formulario.repContrasenia) {
-        const nuevoUsuario = {
-          id: usuarioLs[usuarioLs.length - 1]?.id + 1 || 1,
+        const usuario = await clientAxios.post("/usuarios/register", {
           nombreUsuario: formulario.nombreUsuario,
-          email: formulario.email,
-          contrasenia: formulario.contrasenia,
-          rol: 'usuario',
-          login: false,
-          status: 'enable'
-        }
+          emailUsuario: formulario.email,
+          contrasenia: formulario.contrasenia
+        },
+          {
+            "Content-Type": "application/json"
+          }
 
-        usuarioLs.push(nuevoUsuario)
-        localStorage.setItem('usuarios', JSON.stringify(usuarioLs))
+        )
+
+
+
+        console.log(usuario)
+        /*   const usuario = await fetch("http://localhost:3001/api/usuarios/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              nombreUsuario: formulario.nombreUsuario,
+              emailUsuario: formulario.email,
+              contrasenia: formulario.contrasenia
+            })
+          })
+  
+          const res = await usuario.json()
+  
+          console.log(res) */
+        if (res.statusCode === 201) {
+          Swal.fire({
+            title: "Gracias por tu registro!",
+            text: `${res.msg}`,
+            icon: "success"
+          });
+        }
+        /*  const nuevoUsuario = {
+           id: usuarioLs[usuarioLs.length - 1]?.id + 1 || 1,
+           nombreUsuario: formulario.nombreUsuario,
+           email: formulario.email,
+           contrasenia: formulario.contrasenia,
+           rol: 'usuario',
+           login: false,
+           status: 'enable'
+         }
+ 
+         usuarioLs.push(nuevoUsuario)
+         localStorage.setItem('usuarios', JSON.stringify(usuarioLs)) */
 
         setFormulario({
           nombreUsuario: '',
@@ -79,11 +117,11 @@ const FormC = ({ idPage }) => {
 
   }
 
-  const handleChangeLoginForm = (ev) => {
+  const handleChangeLoginForm = async (ev) => {
     ev.preventDefault()
-    const usuarioLs = JSON.parse(localStorage.getItem('usuarios')) || []
-    const usuarioExiste = usuarioLs.find((usuario) => usuario.nombreUsuario === formulario.nombreUsuario)
-
+    /*    const usuarioLs = JSON.parse(localStorage.getItem('usuarios')) || []
+       const usuarioExiste = usuarioLs.find((usuario) => usuario.nombreUsuario === formulario.nombreUsuario)
+    */
 
 
     let nuevosErrores = {}
@@ -97,27 +135,50 @@ const FormC = ({ idPage }) => {
 
     setErrores(nuevosErrores)
 
-    if (!usuarioExiste) {
-      alert('El usuario y/o contraseña no son correctos. USUARIO')
-    }
+    /*  if (!usuarioExiste) {
+       alert('El usuario y/o contraseña no son correctos. USUARIO')
+     } */
 
+    if (formulario.nombreUsuario && formulario.contrasenia) {
+      const res = await clientAxios.post("/usuarios/login", {
+        nombreUsuario: formulario.nombreUsuario,
+        contrasenia: formulario.contrasenia
+      })
+      console.log(res)
+      if (res.status === 200) {
+        sessionStorage.setItem("token", JSON.stringify(res.data.token))
+        sessionStorage.setItem("rol", JSON.stringify(res.data.rolUsuario))
 
-    if (usuarioExiste.contrasenia === formulario.contrasenia) {
-      usuarioExiste.login = true
-      localStorage.setItem('usuarios', JSON.stringify(usuarioLs))
-      sessionStorage.setItem('usuarioLogueado', JSON.stringify(usuarioExiste))
-      if (usuarioExiste.rol === 'usuario') {
-        setTimeout(() => {
-          navigate('/user')
-        }, 1000);
-      } else {
-        setTimeout(() => {
-          navigate('/admin')
-        }, 1000);
+        if (res.data.rolUsuario === "usuario") {
+          setTimeout(() => {
+            navigate("/user")
+          }, 1000);
+        } else {
+          setTimeout(() => {
+            navigate("/admin")
+          }, 1000);
+        }
       }
-    } else {
-      alert('El usuario y/o contraseña no son correctos. CONTRASEÑA')
+
     }
+
+
+    /*     if (usuarioExiste.contrasenia === formulario.contrasenia) {
+          usuarioExiste.login = true
+          localStorage.setItem('usuarios', JSON.stringify(usuarioLs))
+          sessionStorage.setItem('usuarioLogueado', JSON.stringify(usuarioExiste))
+          if (usuarioExiste.rol === 'usuario') {
+            setTimeout(() => {
+              navigate('/user')
+            }, 1000);
+          } else {
+            setTimeout(() => {
+              navigate('/admin')
+            }, 1000);
+          }
+        } else {
+          alert('El usuario y/o contraseña no son correctos. CONTRASEÑA')
+        } */
 
 
   }
