@@ -8,17 +8,8 @@ const NavbarC = () => {
   const navigate = useNavigate()
   const token = JSON.parse(sessionStorage.getItem('token')) || null
   const rolUsuario = JSON.parse(sessionStorage.getItem('rol')) || null
-  /*   const token = JSON.parse(sessionStorage.getItem('usuarioLogueado')) */
-  /*   const usuariosLs = JSON.parse(localStorage.getItem('usuarios')) || []
-    const usuarioFiltrado = usuariosLs.find((usuario) => usuario.login)
-    console.log(usuarioFiltrado) */
 
   const handleLogoutUser = () => {
-    /*     const usuariosLs = JSON.parse(localStorage.getItem('usuarios')) || []
-        const usuarioFiltrado = usuariosLs.find((usuario) => usuario.id === usuarioLogueado.id)
-        usuarioFiltrado.login = false
-    
-        localStorage.setItem('usuarios', JSON.stringify(usuariosLs)) */
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('rol')
 

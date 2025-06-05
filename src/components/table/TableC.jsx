@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
+import { useState } from 'react';
+import { Button, Container } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import Swal from 'sweetalert2';
+import clientAxios, { configHeaders } from '../../helpers/axios.helpers';
+import { initMercadoPago, Wallet } from "@mercadopago/sdk-react"
 
-const TableC = ({ idPage, array }) => {
+const TableC = ({ idPage, array, obtenerProductoDelCarrito }) => {
   const [cantidad, setCantidad] = useState(1)
-  const [carrito, setCarrito] = useState([])
+  const [idPrefenrecia, setIdPreferencia] = useState("")
 
   const handleChangeQuantity = (ev) => {
     setCantidad(ev.target.value <= 0 ? 1 : ev.target.value)
@@ -20,67 +22,88 @@ const TableC = ({ idPage, array }) => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "SI, estoy seguro!"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const carritoLs = JSON.parse(localStorage.getItem('carrito'))
-        const carritoSinElProducto = carritoLs.filter((producto) => producto.id !== idProducto)
-        setCarrito(carritoSinElProducto)
-        localStorage.setItem('carrito', JSON.stringify(carritoSinElProducto))
+    }).then(async (result) => {
 
-        Swal.fire({
-          title: "Producto eliminado del carrito!",
-          text: "Tu producto fue eliminado con exito",
-          icon: "success"
-        });
+      try {
+        if (result.isConfirmed) {
+          const res = await clientAxios.put(`/carritos/eliminarUnProducto/${idProducto}`, {}, configHeaders)
+          if (res.status === 200) {
+            Swal.fire({
+              title: "Producto eliminado del carrito!",
+              text: "Tu producto fue eliminado con exito",
+              icon: "success"
+            });
+          }
+          obtenerProductoDelCarrito()
+        }
+      } catch (error) {
+        console.log(error)
       }
+
     });
   }
 
-  useEffect(() => {
-    const carritoLs = JSON.parse(localStorage.getItem('carrito')) || []
-    setCarrito(carritoLs)
-  }, [])
-
+  const pagarCarritoMp = async () => {
+    initMercadoPago(`${import.meta.env.VITE_MP_PUBLIC_KEY}`)
+    try {
+      const res = await clientAxios.post("/servicios/pagoMercadoPago", {}, configHeaders)
+      //location.href = `${res.data.responseMp}`
+      setIdPreferencia(res.data.responseMp)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <>
       {
-        carrito.length
+        array?.length
           ?
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Total</th>
-                <th>Eliminar</th>
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
+                  <th>Cantidad</th>
+                  <th>Total</th>
+                  <th>Eliminar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  array.map((producto, i) =>
+                    <tr key={producto._id}>
+                      <td>{i + 1}</td>
+                      <td>{producto.nombre}</td>
+                      <td>{producto.precio}</td>
+                      <td>
+                        <input type="number" className='w-50' value={cantidad} onChange={handleChangeQuantity} />
+                      </td>
+                      <td>
+                        <p>{(cantidad * producto.precio).toFixed(2)}</p>
+                      </td>
+                      <td>
+                        <Button variant='danger' onClick={() => borrarProducto(producto._id)}>Eliminar</Button>
+                      </td>
+                    </tr>
+
+                  )
+                }
+
+              </tbody>
+            </Table>
+            <Container className='text-center my-5'>
+              <Button onClick={pagarCarritoMp}>Pagar con MP</Button>
               {
-                carrito.map((producto, i) =>
-                  <tr key={producto.id}>
-                    <td>{i + 1}</td>
-                    <td>{producto.title}</td>
-                    <td>{producto.price}</td>
-                    <td>
-                      <input type="number" className='w-50' value={cantidad} onChange={handleChangeQuantity} />
-                    </td>
-                    <td>
-                      <p>{(cantidad * producto.price).toFixed(2)}</p>
-                    </td>
-                    <td>
-                      <Button variant='danger' onClick={() => borrarProducto(producto.id)}>Eliminar</Button>
-                    </td>
-                  </tr>
-
-                )
+                idPrefenrecia &&
+                <Container className='w-25'>
+                  <Wallet initialization={{ preferenceId: idPrefenrecia, redirectMode: "modal" }} />
+                </Container>
               }
-
-            </tbody>
-          </Table>
+            </Container>
+          </>
           :
           <h2 className='text-center my-5'>No hay productos cargados todavia en el carrito</h2>
       }

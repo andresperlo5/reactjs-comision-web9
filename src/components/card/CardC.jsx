@@ -3,11 +3,11 @@ import './CardC.css'
 import { Link } from 'react-router';
 
 const CardC = ({ idProd, urlImagen, titulo, descripcion, precio }) => {
-  //const { urlImagen, titulo, descripcion } = props
+
   return (
     <>
       <Card className='mt-5'>
-        <Card.Img variant="top" src={urlImagen} />
+        <Card.Img variant="top" src={urlImagen.includes("public") ? `http://localhost:3001/${urlImagen}` : urlImagen} />
         <Card.Body>
           <Card.Title className='text-truncate'>{titulo}</Card.Title>
           <Card.Title className='text-truncate'>${precio}</Card.Title>

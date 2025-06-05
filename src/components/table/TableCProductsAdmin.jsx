@@ -11,11 +11,8 @@ export const TableCProductsAdmin = () => {
   const rol = JSON.parse(sessionStorage.getItem('rol')) || null
 
   const productoLs = async () => {
-    console.log("1")
     const res = await clientAxios.get("/productos")
-    console.log(res)
     setProductos(res.data.productos)
-    //setProductos(JSON.parse(localStorage.getItem("productos")) || []);
   };
 
 
@@ -128,7 +125,6 @@ export const TableCProductsAdmin = () => {
                       >
                         Eliminar
                       </Button>
-                      {/*             <Button className="btn btn-warning ms-3" >Editar</Button> */}
                       <Link to={usuarioLogeado ? `/admin/crearProducto?id=${producto.id}` : "#"} className="btn btn-warning ms-3" onClick={validarUsuario}>Editar</Link>
                     </td>
                   </tr>

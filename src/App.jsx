@@ -17,6 +17,7 @@ import AdminUsersPage from "./pages/AdminUsersPage";
 import { CrearProducto } from "./pages/products/CrearProducto";
 import PrivateRoute from "./components/privateRoute/PrivateRoute";
 import AboutUsPage from "./pages/AboutUsPage";
+import RecoveryPassPage from "./pages/RecoveryPassPage";
 
 const App = () => {
   return (
@@ -66,6 +67,7 @@ const App = () => {
             </PrivateRoute>
           } />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/recoveryPass" element={<RecoveryPassPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/aboutUs" element={<AboutUsPage />} />

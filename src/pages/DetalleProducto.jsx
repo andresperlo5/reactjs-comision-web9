@@ -3,7 +3,7 @@ import { Button, Col, Container, Row } from "react-bootstrap"
 import { useNavigate, useParams } from "react-router"
 import Swal from 'sweetalert2'
 import { useApiFakeStore } from "../helpers/useApi"
-import clientAxios from "../helpers/axios.helpers"
+import clientAxios, { configHeaders } from "../helpers/axios.helpers"
 
 const DetalleProducto = () => {
   const navigate = useNavigate()
@@ -11,64 +11,50 @@ const DetalleProducto = () => {
   const [producto, setProducto] = useState([])
 
   const obtenerProducto = async () => {
-    // const productosLs = JSON.parse(localStorage.getItem('productos')) || []
 
     try {
       const res = await clientAxios.get(`/productos/${id}`)
 
-      console.log(res)
       setProducto(res.data.producto)
-      /*   
-            if (!productosLs.length) {
-              const res = await useApiFakeStore(id)
-              setProducto(res)
-               const producto = await fetch(`https://fakestoreapi.com/products/${id}`)
-               const data = await producto.json()
-               setProducto(data)
-            } else {
-              const productoFiltrado = productosLs.find((prod) => prod.id === Number(id))
-              setProducto(productoFiltrado)
-            }
-       */
-
     } catch (error) {
-      console.log(error)
+      (error)
     }
   }
 
-  const agregarProductoCarrito = () => {
-    const usuarioLogueado = JSON.parse(sessionStorage.getItem('token')) || null
-    const carritoLs = JSON.parse(localStorage.getItem('carrito')) || []
-    const productoExiste = carritoLs.find((prod) => prod.id === producto.id)
+  const agregarProductoCarrito = async (idProducto) => {
+    try {
+      const usuarioLogueado = JSON.parse(sessionStorage.getItem('token')) || null
 
-    if (!usuarioLogueado) {
-      Swal.fire({
-        icon: "info",
-        title: "Debes iniciar sesion para poder comprar",
-      });
+      if (!usuarioLogueado) {
+        Swal.fire({
+          icon: "info",
+          title: "Debes iniciar sesion para poder comprar",
+        });
 
-      navigate('/login')
+        navigate('/login')
 
-      return
+        return
+      }
+
+      const res = await clientAxios.put(`/carritos/agregarProducto/${idProducto}`, {}, configHeaders)
+
+
+      if (res.status === 200) {
+        Swal.fire({
+          title: `${res.data.msg}`,
+          icon: "success"
+        });
+      }
+    } catch (error) {
+
+      if (error.status === 400) {
+        Swal.fire({
+          title: `${error.response.data.msg}`,
+          icon: "error"
+        });
+      }
+
     }
-
-    if (productoExiste) {
-      Swal.fire({
-        icon: "error",
-        title: "Este producto ya esta cargado en el carrito!",
-        text: "Puedes modificar la cantidad dentro del menu del carrito"
-      });
-      return
-    }
-
-
-    carritoLs.push(producto)
-    Swal.fire({
-      title: "Producto cargado con exito en el carrito!",
-      icon: "success"
-    });
-    localStorage.setItem('carrito', JSON.stringify(carritoLs))
-
 
   }
 
@@ -102,13 +88,13 @@ const DetalleProducto = () => {
       <Container>
         <Row className="mt-5">
           <Col sm='12' md='6'>
-            <img src={producto.imagen} alt="" width={'250'} />
+            <img src={producto.imagen?.includes("public") ? `http://localhost:3001/${producto.imagen}` : producto.imagen} alt="" width={'250'} />
           </Col>
           <Col sm='12' md='6'>
             <h3>{producto.nombre}</h3>
             <p>${producto.precio}</p>
             <p>{producto.descripcion}</p>
-            <Button className="mx-3" variant="success" onClick={agregarProductoCarrito}>Agregar Carrito</Button>
+            <Button className="mx-3" variant="success" onClick={() => agregarProductoCarrito(producto._id)}>Agregar Carrito</Button>
             <Button onClick={handleClickPay}>Comprar</Button>
           </Col>
         </Row>

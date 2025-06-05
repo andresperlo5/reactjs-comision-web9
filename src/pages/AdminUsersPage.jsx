@@ -8,10 +8,8 @@ const AdminUsersPage = () => {
 
   const getUsers = async () => {
     const res = await clientAxios.get("/usuarios", configHeaders)
-    console.log(res)
+
     setUsers(res.data.usuarios)
-    /*   const usuariosLs = JSON.parse(localStorage.getItem('usuarios')) || []
-      setUsers(usuariosLs) */
   }
 
   useEffect(() => {

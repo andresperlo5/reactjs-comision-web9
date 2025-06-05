@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 import clientAxios from '../../helpers/axios.helpers';
 
@@ -17,19 +17,6 @@ const FormC = ({ idPage }) => {
   })
 
   const [errores, setErrores] = useState({})
-
-  //const [formulario, setFormulario] = useState({})
-  /*   const [nombreUsuario, setNombreUsuario] = useState('')
-    const [emailUsuario, setEmailUsuario] = useState('')
-    const [contraseniaUsuario, setContraseniaUsuario] = useState('')
-    const [repContraseniaUsuario, setRepContraseniaUsuario] = useState('')
-    const [checkUsuario, setCheckUsuario] = useState(false) */
-
-  /*   const handleChangeRegisterForm = (ev) => {
-      setNombreUsuario(ev.target.value)
-    } */
-
-
 
   const handleChangeRegisterForm = (ev) => {
     const value = ev.target.type === 'checkbox' ? ev.target.checked : ev.target.value
@@ -63,25 +50,6 @@ const FormC = ({ idPage }) => {
           }
 
         )
-
-
-
-        console.log(usuario)
-        /*   const usuario = await fetch("http://localhost:3001/api/usuarios/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              nombreUsuario: formulario.nombreUsuario,
-              emailUsuario: formulario.email,
-              contrasenia: formulario.contrasenia
-            })
-          })
-  
-          const res = await usuario.json()
-  
-          console.log(res) */
         if (res.statusCode === 201) {
           Swal.fire({
             title: "Gracias por tu registro!",
@@ -89,18 +57,7 @@ const FormC = ({ idPage }) => {
             icon: "success"
           });
         }
-        /*  const nuevoUsuario = {
-           id: usuarioLs[usuarioLs.length - 1]?.id + 1 || 1,
-           nombreUsuario: formulario.nombreUsuario,
-           email: formulario.email,
-           contrasenia: formulario.contrasenia,
-           rol: 'usuario',
-           login: false,
-           status: 'enable'
-         }
- 
-         usuarioLs.push(nuevoUsuario)
-         localStorage.setItem('usuarios', JSON.stringify(usuarioLs)) */
+
 
         setFormulario({
           nombreUsuario: '',
@@ -135,16 +92,12 @@ const FormC = ({ idPage }) => {
 
     setErrores(nuevosErrores)
 
-    /*  if (!usuarioExiste) {
-       alert('El usuario y/o contraseña no son correctos. USUARIO')
-     } */
-
     if (formulario.nombreUsuario && formulario.contrasenia) {
       const res = await clientAxios.post("/usuarios/login", {
         nombreUsuario: formulario.nombreUsuario,
         contrasenia: formulario.contrasenia
       })
-      console.log(res)
+
       if (res.status === 200) {
         sessionStorage.setItem("token", JSON.stringify(res.data.token))
         sessionStorage.setItem("rol", JSON.stringify(res.data.rolUsuario))
@@ -231,9 +184,12 @@ const FormC = ({ idPage }) => {
               </Form.Group>
             </>
           }
-          <Button variant="primary" type="submit" onClick={idPage === 'register' ? handleClickRegisterForm : handleChangeLoginForm}>
-            {idPage === 'register' ? 'Enviar Datos' : 'Ingresar'}
-          </Button>
+          <p>Si olvidaste tu contraseña. <Link to={"/recoveryPass"}>Haz click aqui</Link></p>
+          <Container className="text-center">
+            <Button className='py-3 px-5' variant="primary" type="submit" onClick={idPage === 'register' ? handleClickRegisterForm : handleChangeLoginForm}>
+              {idPage === 'register' ? 'Enviar Datos' : 'Ingresar'}
+            </Button>
+          </Container>
         </Form>
       </Container>
     </>

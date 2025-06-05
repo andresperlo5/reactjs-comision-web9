@@ -2,11 +2,8 @@ import { Col, Container, Row } from 'react-bootstrap'
 import CarouselC from '../components/carousel/CarouselC'
 import CardC from '../components/card/CardC'
 import { useEffect, useState } from 'react'
-import { useApiFakeStore } from '../helpers/useApi'
 import { useChangeTitle } from '../helpers/useChangeNameTitle'
-import axios from 'axios'
 import clientAxios from '../helpers/axios.helpers'
-//import { use = hook = funcion nativa de react } from 'react'
 
 const HomePage = () => {
   useChangeTitle('home')
@@ -15,7 +12,7 @@ const HomePage = () => {
   const obtenerProductos = async () => {
     try {
       const productos = await clientAxios.get("/productos")
-      console.log(productos.data)
+
       setProductos(productos.data.productos)
     } catch (error) {
       console.log(error)
