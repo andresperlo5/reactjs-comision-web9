@@ -25,7 +25,7 @@ const App = () => {
       <Router>
         <NavbarC />
         <Routes>
-          <Route path="/detalle-producto/:id" element={<DetalleProducto />} />
+
           <Route path="/user/cart" element={
             <PrivateRoute rol='usuario'>
               <CartPage />
@@ -66,6 +66,7 @@ const App = () => {
               <AdminPage />
             </PrivateRoute>
           } />
+          <Route path="/detalle-producto/:id" element={<DetalleProducto />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/recoveryPass" element={<RecoveryPassPage />} />
           <Route path="/register" element={<RegisterPage />} />

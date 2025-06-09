@@ -57,7 +57,7 @@ const TableC = ({ idPage, array, obtenerProductoDelCarrito }) => {
   return (
     <>
       {
-        array?.length
+        array?.length && idPage === "productos"
           ?
           <>
             <Table striped bordered hover>
@@ -105,7 +105,52 @@ const TableC = ({ idPage, array, obtenerProductoDelCarrito }) => {
             </Container>
           </>
           :
-          <h2 className='text-center my-5'>No hay productos cargados todavia en el carrito</h2>
+          array?.length && idPage === "adminUsers"
+            ?
+            <>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
+                    array.map((usuario, i) =>
+                      <tr key={usuario._id}>
+                        <td>{i + 1}</td>
+                        <td>{usuario.nombreUsuario}</td>
+                        <td>{usuario.emailUsuario}</td>
+                        <td>{usuario.rol}</td>
+                        <td>
+                          {
+                            usuario.rol === "usuario" &&
+                            <Button variant='danger' onClick={() => borrarProducto(usuario._id)}>Eliminar</Button>
+                          }
+                        </td>
+                      </tr>
+
+                    )
+                  }
+
+                </tbody>
+              </Table>
+              <Container className='text-center my-5'>
+                <Button onClick={pagarCarritoMp}>Pagar con MP</Button>
+                {
+                  idPrefenrecia &&
+                  <Container className='w-25'>
+                    <Wallet initialization={{ preferenceId: idPrefenrecia, redirectMode: "modal" }} />
+                  </Container>
+                }
+              </Container>
+            </>
+            :
+            <h2 className='text-center my-5'>No hay productos cargados todavia en el carrito</h2>
       }
     </>
   )
