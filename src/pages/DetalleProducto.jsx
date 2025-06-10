@@ -88,7 +88,7 @@ const DetalleProducto = () => {
       <Container>
         <Row className="mt-5">
           <Col sm='12' md='6'>
-            <img src={producto.imagen?.includes("public") ? `http://localhost:3001/${producto.imagen}` : producto.imagen} alt="" width={'250'} />
+            <img src={producto.imagen?.includes("public") ? `${import.meta.env.VITE_URL_BACK_LOCAL}/${producto.imagen}` : producto.imagen} alt="" width={'250'} />
           </Col>
           <Col sm='12' md='6'>
             <h3>{producto.nombre}</h3>

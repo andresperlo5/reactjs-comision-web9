@@ -7,7 +7,7 @@ const CardC = ({ idProd, urlImagen, titulo, descripcion, precio }) => {
   return (
     <>
       <Card className='mt-5'>
-        <Card.Img variant="top" src={urlImagen.includes("public") ? `http://localhost:3001/${urlImagen}` : urlImagen} />
+        <Card.Img variant="top" src={urlImagen.includes("public") ? `${import.meta.env.VITE_URL_BACK_LOCAL}/${urlImagen}` : urlImagen} />
         <Card.Body>
           <Card.Title className='text-truncate'>{titulo}</Card.Title>
           <Card.Title className='text-truncate'>${precio}</Card.Title>
