@@ -21,7 +21,7 @@ const CartPage = () => {
   return (
     <>
       <Container className="my-5">
-        <TableC idPage='userCart' array={productos} obtenerProductoDelCarrito={obtenerProductoDelCarrito} />
+        <TableC idPage='productos' array={productos} obtenerProductoDelCarrito={obtenerProductoDelCarrito} />
       </Container>
     </>
   )
